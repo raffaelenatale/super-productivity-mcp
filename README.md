@@ -66,6 +66,7 @@ Task tools include `list_tasks`, `create_task`, `update_task`, `duplicate_task`,
 | `npm run cli:projects` / `cli:tasks` / `cli:tags` | CLI: dump lists (server + plugin must be up) |
 | `npm run cli -- --help` | List all CLI subcommands |
 | `npm run docker:build` / `docker:run` | Build and run the container image |
+| `npm run docker:restart` | `compose down` + `up -d --build` + logs (see [.env.example](.env.example) `MCP_DOCKER_COMPOSE_DIR`) |
 | `npm run plugin:zip` | Zip runtime plugin files to `mcp-bridge-plugin.zip` (for install or sync) |
 
 ## Development
@@ -83,9 +84,11 @@ npm run docker:build
 npm run docker:run
 ```
 
+Redeploy from a compose file (optional `MCP_DOCKER_COMPOSE_DIR` in `.env`): `npm run docker:restart`.
+
 Optional: tag and push the image to a registry you control (`docker tag`, `docker push`, `docker login`).
 
-To keep **personal paths off GitHub**, put `docker-compose.yml` in a directory outside this clone and point `build.context` at the clone (see [deploy.local.example.md](deploy.local.example.md) and [CONTRIBUTING.md](CONTRIBUTING.md)).
+Compose outside the clone (personal paths off the public repo): see [docs/MCP_SERVER.md](docs/MCP_SERVER.md) (section *Docker Compose (optional)*).
 
 ## Contributing and security
 

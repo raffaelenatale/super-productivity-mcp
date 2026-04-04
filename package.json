@@ -18,6 +18,7 @@
     "cli:tags": "node dist/index.js tags",
     "docker:build": "docker build -t super-productivity-mcp .",
     "docker:run": "docker run --rm -e MCP_HOST=0.0.0.0 -p 3000:3000 super-productivity-mcp",
+    "docker:restart": "bash scripts/restart-mcp-docker.sh",
     "plugin:zip": "cd mcp-bridge-plugin && zip -r ../mcp-bridge-plugin.zip manifest.json plugin.js plugin-logic.js socket.io.min.js"
   },
   "keywords": [

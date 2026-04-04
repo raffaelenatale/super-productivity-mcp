@@ -25,13 +25,37 @@ Default `PORT` is **3000** if unset. Docs often use **3996** as an example; any 
 | `MCP_HOST` | Address to bind (`127.0.0.1`, `0.0.0.0`, …) | `127.0.0.1` |
 | `NODE_ENV` | Typical value `production`        | —            |
 
+`MCP_DOCKER_COMPOSE_DIR` (optional, in `.env` at repo root) is **not** read by the Node server; it is only for `npm run docker:restart` / `scripts/restart-mcp-docker.sh` — see [Docker Compose (optional)](#docker-compose-optional) below.
+
 Optional `.env` (if you use a loader) — do not commit secrets:
 
 ```env
 PORT=3996
 MCP_HOST=127.0.0.1
 NODE_ENV=production
+# MCP_DOCKER_COMPOSE_DIR=/path/to/compose-dir   # optional; see Docker Compose section
 ```
+
+## Docker Compose (optional)
+
+You can keep `docker-compose.yml` **in this repository** or in **another directory** (useful if you do not want machine-specific paths in a public clone). In the latter case, set `build.context` in that file to the absolute path of this project.
+
+1. Copy [.env.example](../.env.example) to **`.env`** in the repo root (gitignored).
+2. If compose lives outside the repo, set:
+
+   ```env
+   MCP_DOCKER_COMPOSE_DIR=/absolute/path/to/folder/with/docker-compose.yml
+   ```
+
+3. Redeploy:
+
+   ```bash
+   npm run docker:restart
+   ```
+
+   This runs `docker compose down`, `up -d --build`, then prints recent logs (`scripts/restart-mcp-docker.sh`). If `MCP_DOCKER_COMPOSE_DIR` is unset and there is no `docker-compose.yml` at the repo root, the script exits with a hint.
+
+You can always run `docker compose` manually from whichever directory holds your compose file.
 
 ## Endpoints
 

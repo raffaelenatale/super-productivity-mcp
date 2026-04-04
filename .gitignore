@@ -11,9 +11,6 @@ build/
 .env.local
 .env.*.local
 
-# Private deploy notes (paths, personal layout — do not commit)
-deploy.local.md
-
 # IDE
 .vscode/
 .idea/
