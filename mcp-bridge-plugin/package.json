@@ -14,7 +14,7 @@
   "author": "Alan Delon Sousa Rocha",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.19.2",
+    "express": "^5.2.1",
     "socket.io": "^4.7.5"
   },
   "devDependencies": {
