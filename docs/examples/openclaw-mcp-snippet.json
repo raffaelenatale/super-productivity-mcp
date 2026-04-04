@@ -1,0 +1,10 @@
+{
+  "mcp": {
+    "servers": {
+      "superproductivity": {
+        "url": "http://127.0.0.1:3996/mcp",
+        "transport": "streamable-http"
+      }
+    }
+  }
+}

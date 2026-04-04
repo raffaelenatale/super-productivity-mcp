@@ -1,0 +1,73 @@
+{
+  "name": "super-productivity-mcp",
+  "version": "1.0.0",
+  "description": "MCP server bridging Super Productivity tasks and projects via Streamable HTTP and Socket.IO",
+  "main": "dist/index.js",
+  "bin": {
+    "super-productivity-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "start": "node dist/index.js start",
+    "dev": "tsx watch src/index.ts start",
+    "cli": "node dist/index.js",
+    "connect": "node dist/index.js connect",
+    "cli:projects": "node dist/index.js projects",
+    "cli:tasks": "node dist/index.js tasks",
+    "cli:tags": "node dist/index.js tags",
+    "docker:build": "docker build -t super-productivity-mcp .",
+    "docker:run": "docker run --rm -e MCP_HOST=0.0.0.0 -p 3000:3000 super-productivity-mcp"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "super-productivity",
+    "task-manager",
+    "socket.io"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/raffaelenatale/super-productivity-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/raffaelenatale/super-productivity-mcp/issues"
+  },
+  "homepage": "https://github.com/raffaelenatale/super-productivity-mcp#readme",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "SECURITY.md",
+    "CONTRIBUTING.md",
+    "CODE_OF_CONDUCT.md",
+    "docs",
+    "mcp-bridge-plugin"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.1",
+    "axios": "^1.13.2",
+    "chalk": "^5.6.2",
+    "commander": "^14.0.3",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "figlet": "^1.11.0",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.3",
+    "ws": "^8.18.3",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.5",
+    "@types/node": "^20.14.9",
+    "@types/ws": "^8.18.1",
+    "tsx": "^4.16.2",
+    "typescript": "^5.5.3"
+  }
+}

@@ -1,0 +1,99 @@
+# Super Productivity MCP
+
+[MCP](https://modelcontextprotocol.io/) server that connects **Super Productivity** to external tools via **Streamable HTTP**, using an in-app **MCP Bridge** plugin and **Socket.IO**.
+
+## Features
+
+- Task and project operations (list, create, update, delete, batch, reorder, duplicate, …)
+- Tags, counters, UI helpers, persisted plugin data, optional action dispatch (restricted)
+- Runs beside Super Productivity; data remains in the app
+
+## Requirements
+
+- **Node.js** 18+
+- **Super Productivity** 14+ (plugin API)
+- Plugin files from `mcp-bridge-plugin/` installed into the app’s plugin directory
+
+## Documentation
+
+| Doc | Description |
+|-----|-------------|
+| [docs/INSTALL.md](docs/INSTALL.md) | Super Productivity + plugin install |
+| [docs/MCP_SERVER.md](docs/MCP_SERVER.md) | Build, run, ports, Socket.IO |
+| [docs/SYSTEMD.md](docs/SYSTEMD.md) | Example systemd units |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Data flow diagram |
+| [docs/CLIENTS.md](docs/CLIENTS.md) | Cursor and generic MCP clients |
+| [docs/OPENCLAW.md](docs/OPENCLAW.md) | OpenClaw `streamable-http` setup |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Build, Git, PR notes |
+| [SECURITY.md](SECURITY.md) | Vulnerability reporting |
+
+## Quick start
+
+```bash
+npm ci
+npm run build
+PORT=3996 npm start
+```
+
+Install the plugin (see [docs/INSTALL.md](docs/INSTALL.md)), ensure `plugin.js` points at the same port and host as the server (default bind is `127.0.0.1`; use `MCP_HOST=0.0.0.0` for Docker or LAN-only setups — see [docs/MCP_SERVER.md](docs/MCP_SERVER.md)), then start Super Productivity. The server log should show `Super Productivity plugin connected:` when the bridge attaches.
+
+### Plugin ZIP, enabling on a machine with a display, and a headless VPS
+
+You may need to **ship the plugin as a `.zip`** (zip `mcp-bridge-plugin/` with `manifest.json` at the archive root) and install it on a computer **with a normal display and GUI** first. Turning the bridge **on** under **Settings → Plugins** is much easier there than on a blind headless session.
+
+After it is enabled once, plugin files and settings live under the Super Productivity profile (e.g. `~/.config/superProductivity/` on Linux). If you use **Super Productivity’s own sync** (WebDAV / Nextcloud / etc.), the same profile—including the plugin folder and enabled state—can propagate to another machine. A **VPS running Super Productivity on Xvfb** can then end up with the plugin **already present and enabled**, as long as that instance uses the synced profile (or you copy/rsync the same config tree to the server).
+
+If you do not use cloud sync, copy the relevant profile directory (or only `plugins/mcp-bridge/`) to the server after enabling on the GUI machine, then restart the app on the VPS.
+
+## MCP URL
+
+```
+http://localhost:<PORT>/mcp
+```
+
+## Tools (overview)
+
+Task tools include `list_tasks`, `create_task`, `update_task`, `duplicate_task`, `delete_task`, `complete_task`, `batch_update_tasks`, `reorder_tasks`, and scheduling-related fields where the app supports them. There are also project, tag, counter, UI, data, and productivity-helper tools. Inspect the running server with your MCP client’s tool list for the authoritative set.
+
+## npm scripts
+
+| Script | Purpose |
+|--------|---------|
+| `npm run build` | Compile TypeScript to `dist/` |
+| `npm start` | Run MCP server (`node dist/index.js start`) |
+| `npm run dev` | Watch mode server reload (`tsx watch … start`) |
+| `npm run connect` | CLI: attach socket client (see [docs/MCP_SERVER.md](docs/MCP_SERVER.md)) |
+| `npm run cli:projects` / `cli:tasks` / `cli:tags` | CLI: dump lists (server + plugin must be up) |
+| `npm run cli -- --help` | List all CLI subcommands |
+| `npm run docker:build` / `docker:run` | Build and run the container image |
+
+## Development
+
+```bash
+npm run dev
+```
+
+## Docker
+
+The image sets `MCP_HOST=0.0.0.0` so the server accepts connections from outside the container (for example published ports).
+
+```bash
+npm run docker:build
+npm run docker:run
+```
+
+## Contributing and security
+
+See [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md), and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+
+## CLI on PATH
+
+After `npm run build`, you can run `npx super-productivity-mcp start` or install globally so `super-productivity-mcp` is on your `PATH` (see `bin` in [package.json](package.json)).
+
+## License
+
+ISC — see [LICENSE](LICENSE). This project builds on ideas and code from the Super Productivity ecosystem; respect upstream licenses when redistributing.
+
+## Attribution
+
+Derived from community work around [super-productivity-mcp](https://github.com/rochadelon/super-productivity-mcp) and [Super Productivity](https://github.com/super-productivity/super-productivity).

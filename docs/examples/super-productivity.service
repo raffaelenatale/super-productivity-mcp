@@ -1,0 +1,14 @@
+[Unit]
+Description=Super Productivity
+After=xvfb.service
+Requires=xvfb.service
+
+[Service]
+Type=simple
+Environment="DISPLAY=:99"
+ExecStart=/usr/local/bin/super-productivity --no-sandbox --disable-software-rasterizer
+Restart=always
+User=YOUR_USER
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,17 @@
+[Unit]
+Description=Super Productivity MCP Server (Node)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/super-productivity-mcp
+ExecStart=/usr/bin/node /opt/super-productivity-mcp/dist/index.js start
+Restart=always
+RestartSec=10
+User=YOUR_USER
+Environment=HOME=/home/YOUR_USER
+Environment=NODE_ENV=production
+Environment=PORT=3996
+
+[Install]
+WantedBy=multi-user.target

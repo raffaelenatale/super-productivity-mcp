@@ -1,0 +1,31 @@
+{
+  "name": "MCP Bridge",
+  "id": "mcp-bridge",
+  "manifestVersion": 1,
+  "version": "1.0.0",
+  "minSupVersion": "14.0.0",
+  "description": "Bridge between Super Productivity and MCP servers",
+  "hooks": [
+    "taskComplete",
+    "taskUpdate",
+    "taskDelete",
+    "currentTaskChange",
+    "anyTaskUpdate",
+    "projectListUpdate"
+  ],
+  "permissions": [
+    "tasks:read",
+    "tasks:write",
+    "projects:read",
+    "projects:write",
+    "tags:read",
+    "tags:write",
+    "nodeExecution"
+  ],
+  "nodeScriptConfig": {
+    "allowedPaths": ["./plugin.js", "./plugin-logic.js", "./socket.io.min.js"],
+    "timeout": 30000,
+    "memoryLimit": "256MB"
+  },
+  "sidePanel": false
+}
