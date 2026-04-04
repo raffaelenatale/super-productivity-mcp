@@ -14,12 +14,12 @@
   "author": "Alan Delon Sousa Rocha",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.19.2",
-    "socket.io": "^4.7.5"
+    "express": "^5.2.1",
+    "socket.io": "^4.8.3"
   },
   "devDependencies": {
-    "@types/express": "^4.17.21",
-    "@types/node": "^20.14.9",
-    "typescript": "^5.5.3"
+    "@types/express": "^5.0.6",
+    "@types/node": "^20.19.0",
+    "typescript": "^5.9.3"
   }
 }
