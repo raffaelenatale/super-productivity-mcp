@@ -21,6 +21,7 @@ Add an entry under `mcp.servers` in your OpenClaw config (path depends on instal
 
 - Replace **`3996`** with your real `PORT`.
 - Replace **`127.0.0.1`** with the correct host if OpenClaw runs elsewhere (see below).
+- The server defaults to **`MCP_HOST=127.0.0.1`**. If OpenClaw runs in another network namespace (Docker, remote host), ensure the server is bound so that address is reachable (`MCP_HOST=0.0.0.0` in Docker is common; see [MCP_SERVER.md](MCP_SERVER.md)).
 
 A copy-paste template without other secrets is in [examples/openclaw-mcp-snippet.json](examples/openclaw-mcp-snippet.json).
 
@@ -43,5 +44,5 @@ Streamable HTTP clients cache an **`mcp-session-id`**. If you **`systemctl resta
 
 ## Security
 
-- Prefer **localhost** or a private network; avoid exposing `/mcp` on the public internet without TLS and authentication.
+- Prefer **loopback** (`127.0.0.1`) or a private network; avoid exposing `/mcp` on the public internet without TLS and authentication. The Streamable HTTP MCP surface is not authenticated by default.
 - Do not paste API keys or real `openclaw.json` files into public bug reports.

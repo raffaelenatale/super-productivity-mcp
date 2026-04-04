@@ -6,6 +6,7 @@ Any client that supports **Streamable HTTP** (or your chosen transport) can poin
 
 - **URL:** `http://<host>:<PORT>/mcp`
 - **Transport:** `streamable-http` (or the name your client uses for the MCP Streamable HTTP profile)
+- **Reachability:** `<host>` must be an address where the MCP server is listening (`MCP_HOST` and firewall; see [MCP_SERVER.md](MCP_SERVER.md)).
 
 ## Cursor
 

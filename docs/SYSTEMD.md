@@ -21,6 +21,8 @@ sleep 2
 sudo systemctl restart super-productivity.service
 ```
 
+Set `PORT` and optionally `MCP_HOST` in the MCP server unit (default bind is loopback; use `MCP_HOST=0.0.0.0` only if something on another interface must connect). See [MCP_SERVER.md](MCP_SERVER.md).
+
 ## Example units
 
 Templates are in [examples/](examples/):

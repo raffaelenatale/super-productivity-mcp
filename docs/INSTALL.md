@@ -21,11 +21,42 @@ The plugin lives in `mcp-bridge-plugin/` in this repository. To ship it as a sin
    var socket = io("http://127.0.0.1:3996", { ... });
    ```
 
-   On Linux prefer **`127.0.0.1`** over `localhost` when the MCP server is published on IPv4 only (e.g. Docker `127.0.0.1:3996:3996`), because `localhost` may resolve to `::1` and the socket will not connect.
+   Use the same **host** and **port** the MCP server listens on. Defaults: `PORT=3000`, `MCP_HOST=127.0.0.1` (see [MCP_SERVER.md](MCP_SERVER.md)). The examples use **3996** as a common choice; change both the server environment and this URL together.
 
-   The **port must match** the MCP server `PORT` (see [MCP_SERVER.md](MCP_SERVER.md)).
+   On Linux prefer **`127.0.0.1`** over `localhost` when the server is bound to IPv4 only (e.g. `MCP_HOST=127.0.0.1` or Docker publish `127.0.0.1:<hostPort>:<containerPort>`), because `localhost` may resolve to `::1` and the socket will not connect.
+
+   If the server uses **`MCP_HOST=0.0.0.0`** (Docker or LAN), the plugin on the **same machine** can still use `http://127.0.0.1:<PORT>`.
 
 5. Restart Super Productivity after changing the plugin or server port.
+
+## Sync the plugin after a `git pull`
+
+The app loads files from your profile (e.g. `~/.config/superProductivity/plugins/mcp-bridge/`), not from this repo. After updating the repository:
+
+1. **Copy or rsync** the runtime files from `mcp-bridge-plugin/` into that folder (overwrite `plugin.js`, `plugin-logic.js`, `socket.io.min.js`, `manifest.json` as needed). Example:
+
+   ```bash
+   rsync -a \
+     ./mcp-bridge-plugin/manifest.json \
+     ./mcp-bridge-plugin/plugin.js \
+     ./mcp-bridge-plugin/plugin-logic.js \
+     ./mcp-bridge-plugin/socket.io.min.js \
+     ~/.config/superProductivity/plugins/mcp-bridge/
+   ```
+
+   Adjust the destination path if your profile directory differs.
+
+2. Or build a **ZIP** from the repo and reinstall via **Settings → Plugins**:
+
+   ```bash
+   npm run plugin:zip
+   ```
+
+   That writes `mcp-bridge-plugin.zip` at the repository root (ignored by Git). Install it in Super Productivity, or unzip over `plugins/mcp-bridge/` yourself.
+
+3. **`plugin.ts`** in the repo is not what Electron runs; the shipped script is **`plugin.js`**. Rebuild `plugin.js` yourself only if you maintain a separate build pipeline.
+
+4. If **`manifest.json` `version`** changed, the app may show an update depending on Super Productivity’s plugin UI.
 
 ## Verify
 

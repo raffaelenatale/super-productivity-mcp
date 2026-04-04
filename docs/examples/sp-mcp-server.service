@@ -12,6 +12,7 @@ User=YOUR_USER
 Environment=HOME=/home/YOUR_USER
 Environment=NODE_ENV=production
 Environment=PORT=3996
+Environment=MCP_HOST=127.0.0.1
 
 [Install]
 WantedBy=multi-user.target

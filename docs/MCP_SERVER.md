@@ -13,7 +13,7 @@ PORT=3996 npm start
 
 `npm start` runs `node dist/index.js start`.
 
-Default `PORT` is **3000** if unset; production setups often use **3996** or another fixed port.
+Default `PORT` is **3000** if unset. Docs often use **3996** as an example; any free port is fine as long as the plugin URL matches.
 
 **Bind address:** `MCP_HOST` defaults to **`127.0.0.1`** so the HTTP and Socket.IO listener is not exposed on the LAN. Use **`MCP_HOST=0.0.0.0`** only when you need other machines or containers to reach the server (for example Docker port publishing). The MCP endpoint is not authenticated; treat exposure like any local admin surface.
 

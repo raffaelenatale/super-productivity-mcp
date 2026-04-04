@@ -66,6 +66,7 @@ Task tools include `list_tasks`, `create_task`, `update_task`, `duplicate_task`,
 | `npm run cli:projects` / `cli:tasks` / `cli:tags` | CLI: dump lists (server + plugin must be up) |
 | `npm run cli -- --help` | List all CLI subcommands |
 | `npm run docker:build` / `docker:run` | Build and run the container image |
+| `npm run plugin:zip` | Zip runtime plugin files to `mcp-bridge-plugin.zip` (for install or sync) |
 
 ## Development
 
@@ -82,13 +83,17 @@ npm run docker:build
 npm run docker:run
 ```
 
+Optional: tag and push the image to a registry you control (`docker tag`, `docker push`, `docker login`).
+
+To keep **personal paths off GitHub**, put `docker-compose.yml` in a directory outside this clone and point `build.context` at the clone (see [deploy.local.example.md](deploy.local.example.md) and [CONTRIBUTING.md](CONTRIBUTING.md)).
+
 ## Contributing and security
 
 See [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md), and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
-## CLI on PATH
+## CLI
 
-After `npm run build`, you can run `npx super-productivity-mcp start` or install globally so `super-productivity-mcp` is on your `PATH` (see `bin` in [package.json](package.json)).
+After `npm run build`, run `node dist/index.js start` or `npm start`. The [package.json](package.json) `bin` field also allows `npm link` from a clone so `super-productivity-mcp` is on your `PATH`.
 
 ## License
 
