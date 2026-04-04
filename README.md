@@ -1,6 +1,8 @@
 # Super Productivity MCP
 
-[MCP](https://modelcontextprotocol.io/) server that connects **Super Productivity** to external tools via **Streamable HTTP**, using an in-app **MCP Bridge** plugin and **Socket.IO**.
+[MCP](https://modelcontextprotocol.io/) server that connects **[Super Productivity](https://super-productivity.com/)** to external tools via **Streamable HTTP**, using an in-app **MCP Bridge** plugin and **Socket.IO**.
+
+This repository is an **independent community bridge**, not the official Super Productivity app. The maintainers of **super-productivity-mcp** are **not** the owners or core team of Super Productivity. For the app itself, see the [project website](https://super-productivity.com/) and the upstream source at [github.com/super-productivity/super-productivity](https://github.com/super-productivity/super-productivity).
 
 ## Features
 
@@ -11,7 +13,7 @@
 ## Requirements
 
 - **Node.js** 18+
-- **Super Productivity** 14+ (plugin API)
+- **[Super Productivity](https://super-productivity.com/)** 14+ (plugin API; [upstream repo](https://github.com/super-productivity/super-productivity))
 - Plugin files from `mcp-bridge-plugin/` installed into the app’s plugin directory
 
 ## Documentation
@@ -104,4 +106,5 @@ ISC — see [LICENSE](LICENSE). This project builds on ideas and code from the S
 
 ## Attribution
 
-Derived from community work around [super-productivity-mcp](https://github.com/rochadelon/super-productivity-mcp) and [Super Productivity](https://github.com/super-productivity/super-productivity).
+- **Super Productivity** (the desktop/web app): [super-productivity.com](https://super-productivity.com/) · [super-productivity/super-productivity](https://github.com/super-productivity/super-productivity) (MIT). This MCP server is a separate, community-maintained project and is not the official Super Productivity product or team.
+- **Prior art / inspiration:** community work around [rochadelon/super-productivity-mcp](https://github.com/rochadelon/super-productivity-mcp).
