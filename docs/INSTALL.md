@@ -21,7 +21,7 @@ The plugin lives in `mcp-bridge-plugin/` in this repository. To ship it as a sin
    var socket = io("http://127.0.0.1:3996", { ... });
    ```
 
-   Use the same **host** and **port** the MCP server listens on. Defaults: `PORT=3000`, `MCP_HOST=127.0.0.1` (see [MCP_SERVER.md](MCP_SERVER.md)). The examples use **3996** as a common choice; change both the server environment and this URL together.
+   Use the same **host** and **port** the MCP server listens on. The server code defaults to `PORT=3000` if no environment variable is set, but the plugin file defaults to `http://127.0.0.1:3996` — set `PORT=3996` when starting the server (or edit the plugin URL) so both sides agree. See [MCP_SERVER.md](MCP_SERVER.md).
 
    On Linux prefer **`127.0.0.1`** over `localhost` when the server is bound to IPv4 only (e.g. `MCP_HOST=127.0.0.1` or Docker publish `127.0.0.1:<hostPort>:<containerPort>`), because `localhost` may resolve to `::1` and the socket will not connect.
 

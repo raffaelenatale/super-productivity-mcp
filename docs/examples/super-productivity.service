@@ -6,7 +6,13 @@ Requires=xvfb.service
 [Service]
 Type=simple
 Environment="DISPLAY=:99"
-ExecStart=/usr/local/bin/super-productivity --no-sandbox --disable-software-rasterizer
+ExecStart=/usr/local/bin/super-productivity \
+  --remote-debugging-port=9222 \
+  --no-sandbox \
+  --disable-software-rasterizer \
+  --disable-background-timer-throttling \
+  --disable-renderer-backgrounding \
+  --disable-backgrounding-occluded-windows
 Restart=always
 User=YOUR_USER
 

@@ -19,6 +19,24 @@ import { setupCounterTools } from "./tools/counters.js";
 import { setupDataTools } from "./tools/data.js";
 import { setupMiscTools } from "./tools/misc.js";
 
+function tsLog(...parts: unknown[]): void {
+  console.log(`[${new Date().toISOString()}]`, ...parts);
+}
+
+function oneLine(value: unknown): string {
+  if (value === undefined || value === null) {
+    return "";
+  }
+  if (typeof value === "string") {
+    return value.replace(/\s+/g, " ").trim();
+  }
+  try {
+    return JSON.stringify(value);
+  } catch {
+    return String(value);
+  }
+}
+
 class SocketSuperProductivityClient {
     private socket: Socket | null = null;
   
@@ -195,21 +213,87 @@ program
     const host = process.env.MCP_HOST?.trim() || '127.0.0.1';
     const app = express();
     const httpServer = createServer(app);
+    const pingTimeout = parseInt(process.env.SOCKET_IO_PING_TIMEOUT_MS || "120000", 10);
+    const pingInterval = parseInt(process.env.SOCKET_IO_PING_INTERVAL_MS || "25000", 10);
     const io = new SocketIOServer(httpServer, {
       cors: {
         origin: "*",
         methods: ["GET", "POST"],
       },
+      pingTimeout,
+      pingInterval,
+      connectTimeout: parseInt(process.env.SOCKET_IO_CONNECT_TIMEOUT_MS || "120000", 10),
     });
 
     app.use(express.json());
 
+    io.engine.on("connection_error", (err) => {
+      tsLog(
+        "Socket.IO engine connection error:",
+        `code=${err.code}`,
+        `message=${oneLine(err.message)}`,
+        `transport=${err.context?.transport ?? "unknown"}`,
+        `url=${err.req?.url ?? "unknown"}`,
+      );
+    });
+
     io.on("connection", (socket) => {
-      console.log("Super Productivity plugin connected:", socket.id);
+      const transport = socket.conn?.transport?.name ?? "unknown";
+      const remoteAddress =
+        socket.handshake.address || socket.conn.remoteAddress || "unknown";
+      const userAgent = oneLine(socket.handshake.headers["user-agent"]);
+      tsLog(
+        "Super Productivity plugin connected:",
+        socket.id,
+        `transport=${transport}`,
+        `remote=${remoteAddress}`,
+        `userAgent=${userAgent || "unknown"}`,
+      );
       spClient.setSocket(socket);
 
-      socket.on("disconnect", () => {
-        console.log("Super Productivity plugin disconnected:", socket.id);
+      socket.conn?.once("upgrade", () => {
+        tsLog(
+          "Super Productivity plugin transport upgraded:",
+          socket.id,
+          `transport=${socket.conn?.transport?.name ?? "unknown"}`,
+        );
+      });
+
+      socket.conn?.on("close", (reason: string) => {
+        tsLog(
+          "Super Productivity engine transport closed:",
+          socket.id,
+          `reason=${reason}`,
+          `transport=${socket.conn?.transport?.name ?? "unknown"}`,
+        );
+      });
+
+      socket.conn?.on("error", (err: unknown) => {
+        tsLog(
+          "Super Productivity engine transport error:",
+          socket.id,
+          oneLine(err),
+        );
+      });
+
+      socket.on("error", (err: Error) => {
+        tsLog(
+          "Super Productivity socket error:",
+          socket.id,
+          `message=${oneLine(err.message)}`,
+        );
+      });
+
+      socket.on("disconnect", (reason: string, description?: unknown) => {
+        const detail =
+          description !== undefined && description !== null
+            ? ` detail=${String(description)}`
+            : "";
+        tsLog(
+          "Super Productivity plugin disconnected:",
+          socket.id,
+          `reason=${reason}${detail}`,
+        );
         if (spClient.socket?.id === socket.id) {
           spClient.setSocket(null);
         }
@@ -229,13 +313,15 @@ program
           sessionIdGenerator: () => randomUUID(),
           onsessioninitialized: (sid) => {
             transports[sid] = transport;
-            console.log(`MCP Session initialized: ${sid}`);
+            tsLog(`MCP session initialized: ${sid}`);
           },
         });
 
         transport.onclose = () => {
           if (transport.sessionId) {
-            console.log(`MCP Session closed: ${transport.sessionId}`);
+            tsLog(
+              `MCP session closed: ${transport.sessionId} reason=DELETE /mcp (client ended Streamable HTTP session)`,
+            );
             delete transports[transport.sessionId];
           }
         };
@@ -294,7 +380,11 @@ program
         }
         console.log(chalk.blue(data));
         const base = host === '0.0.0.0' ? 'all interfaces' : host;
-        console.log(chalk.green(`Super Productivity MCP: http://${host === '0.0.0.0' ? 'localhost' : host}:${port}/mcp (bind ${base})`));
+        tsLog(
+          chalk.green(
+            `Super Productivity MCP: http://${host === '0.0.0.0' ? 'localhost' : host}:${port}/mcp (bind ${base})`,
+          ),
+        );
       });
     });
   });
@@ -309,8 +399,10 @@ program
     socket.on('connect', () => {
       console.log(chalk.green('Connected to Super Productivity plugin.'));
     });
-    socket.on('disconnect', () => {
-      console.log(chalk.red('Disconnected from Super Productivity plugin.'));
+    socket.on('disconnect', (reason: string) => {
+      console.log(
+        chalk.red(`Disconnected from Super Productivity plugin. reason=${reason}`),
+      );
     });
   });
 

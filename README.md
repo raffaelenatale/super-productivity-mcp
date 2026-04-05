@@ -20,12 +20,14 @@ This repository is an **independent community bridge**, not the official Super P
 
 | Doc | Description |
 |-----|-------------|
-| [docs/INSTALL.md](docs/INSTALL.md) | Super Productivity + plugin install |
-| [docs/MCP_SERVER.md](docs/MCP_SERVER.md) | Build, run, ports, Socket.IO |
-| [docs/SYSTEMD.md](docs/SYSTEMD.md) | Example systemd units |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Data flow diagram |
+| [docs/HEADLESS_VPS_SETUP.md](docs/HEADLESS_VPS_SETUP.md) | **Complete headless VPS setup** with Xvfb, systemd, and profile sync (recommended for production) |
+| [docs/INSTALL.md](docs/INSTALL.md) | Super Productivity + plugin install (manual, local machine) |
+| [docs/MCP_SERVER.md](docs/MCP_SERVER.md) | Build, run, ports, Socket.IO configuration |
+| [docs/SYSTEMD.md](docs/SYSTEMD.md) | Example systemd units (reference; see HEADLESS_VPS_SETUP.md for full instructions) |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Data flow and architecture diagram |
 | [docs/CLIENTS.md](docs/CLIENTS.md) | Cursor and generic MCP clients |
 | [docs/OPENCLAW.md](docs/OPENCLAW.md) | OpenClaw `streamable-http` setup |
+| [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) | Common issues and solutions |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Build, Git, PR notes |
 | [SECURITY.md](SECURITY.md) | Vulnerability reporting |
 
@@ -34,18 +36,36 @@ This repository is an **independent community bridge**, not the official Super P
 ```bash
 npm ci
 npm run build
-PORT=3996 npm start
+npm start          # listens on 127.0.0.1:3000 by default
+# or: PORT=3996 npm start
 ```
 
-Install the plugin (see [docs/INSTALL.md](docs/INSTALL.md)), ensure `plugin.js` points at the same port and host as the server (default bind is `127.0.0.1`; use `MCP_HOST=0.0.0.0` for Docker or LAN-only setups — see [docs/MCP_SERVER.md](docs/MCP_SERVER.md)), then start Super Productivity. The server log should show `Super Productivity plugin connected:` when the bridge attaches.
+Install the plugin (see [docs/INSTALL.md](docs/INSTALL.md)), ensure `plugin-logic.js` points at the same port and host as the server (the plugin defaults to `http://127.0.0.1:3996`; use `MCP_HOST=0.0.0.0` for Docker or LAN-only setups — see [docs/MCP_SERVER.md](docs/MCP_SERVER.md)), then start Super Productivity. The server log shows `Super Productivity plugin connected:` when the bridge attaches.
+
+### For headless VPS deployments ⭐
+
+**Do not skip the [HEADLESS_VPS_SETUP.md](docs/HEADLESS_VPS_SETUP.md) guide.** It covers the complete, tested workflow for deploying on a headless Linux VPS:
+
+- Installing Xvfb (virtual display)
+- Creating systemd units for Xvfb, MCP Server, and Super Productivity
+- **Syncing the plugin enabled state** from your local machine (required, because there’s no way to enable plugins on a headless session)
+- Verifying the setup and troubleshooting common issues
 
 ### Plugin ZIP, enabling on a machine with a display, and a headless VPS
 
-You may need to **ship the plugin as a `.zip`** (zip `mcp-bridge-plugin/` with `manifest.json` at the archive root) and install it on a computer **with a normal display and GUI** first. Turning the bridge **on** under **Settings → Plugins** is much easier there than on a blind headless session.
+You **must** enable the plugin on a machine **with a normal display and GUI** first, because Super Productivity has no CLI option to enable plugins.
 
-After it is enabled once, plugin files and settings live under the Super Productivity profile (e.g. `~/.config/superProductivity/` on Linux). If you use **Super Productivity’s own sync** (WebDAV / Nextcloud / etc.), the same profile—including the plugin folder and enabled state—can propagate to another machine. A **VPS running Super Productivity on Xvfb** can then end up with the plugin **already present and enabled**, as long as that instance uses the synced profile (or you copy/rsync the same config tree to the server).
+1. **On your local machine:**
+   - Install the plugin: zip `mcp-bridge-plugin/` with `manifest.json` at the archive root (`npm run plugin:zip` does this)
+   - Install via **Settings → Plugins → Install from file**
+   - Enable it under **Settings → Plugins → MCP Bridge**
 
-If you do not use cloud sync, copy the relevant profile directory (or only `plugins/mcp-bridge/`) to the server after enabling on the GUI machine, then restart the app on the VPS.
+2. **After enabling**, plugin files and settings live under the Super Productivity profile (e.g. `~/.config/superProductivity/` on Linux).
+
+3. **Sync to the VPS:**
+   - If you use **Super Productivity’s own sync** (WebDAV / Nextcloud / etc.), the same profile—including the plugin folder and enabled state—can propagate to another machine.
+   - **Or**, copy the configuration tree to the server after enabling on the GUI machine (see [HEADLESS_VPS_SETUP.md](docs/HEADLESS_VPS_SETUP.md) Step 3).
+   - A **VPS running Super Productivity on Xvfb** can then end up with the plugin **already present and enabled**.
 
 ## MCP URL
 

@@ -1,25 +1,110 @@
 (function () {
-  console.log("MCP Bridge: Loading plugin logic...");
+  function ts() {
+    return new Date().toISOString();
+  }
+
+  function log(level, message, extra) {
+    var prefix = "[MCP Bridge " + ts() + "]";
+    if (extra === undefined) {
+      console[level](prefix + " " + message);
+      return;
+    }
+    console[level](prefix + " " + message, extra);
+  }
+
+  log("log", "Loading plugin logic...");
 
   function initPlugin(api) {
-    console.log("MCP Bridge: Initializing with API...");
+    log("log", "Initializing with API...");
 
     // Connect to the MCP server (same host; PORT must match server, e.g. 3996)
     var socket = io("http://127.0.0.1:3996", {
       reconnectionDelayMax: 10000,
+      transports: ["websocket", "polling"],
+      upgrade: true,
+      timeout: 120000,
+      transportOptions: {
+        polling: {
+          requestTimeout: 120000,
+        },
+      },
     });
+
+    function currentTransport() {
+      return socket.io && socket.io.engine && socket.io.engine.transport
+        ? socket.io.engine.transport.name
+        : "unknown";
+    }
 
     socket.on("connect", function () {
-      console.log("MCP Bridge: Connected to MCP Server via WebSocket");
+      log(
+        "log",
+        "Connected to MCP Server socketId=" + socket.id + " transport=" + currentTransport(),
+      );
     });
 
-    socket.on("disconnect", function () {
-      console.log("MCP Bridge: Disconnected from MCP Server");
+    socket.on("disconnect", function (reason, details) {
+      log(
+        "warn",
+        "Disconnected from MCP Server reason=" + reason + " transport=" + currentTransport(),
+        details,
+      );
     });
 
     socket.on("connect_error", function (err) {
-      console.error("MCP Bridge: Connection error:", err);
+      log("error", "Connection error", {
+        message: err && err.message,
+        description: err && err.description,
+        context: err && err.context,
+        transport: currentTransport(),
+      });
     });
+
+    socket.io.on("open", function () {
+      log("log", "Socket.IO manager open transport=" + currentTransport());
+    });
+
+    socket.io.on("close", function (reason, details) {
+      log("warn", "Socket.IO manager close reason=" + reason, details);
+    });
+
+    socket.io.on("error", function (err) {
+      log("error", "Socket.IO manager error", err);
+    });
+
+    socket.io.on("reconnect_attempt", function (attempt) {
+      log("warn", "Socket.IO reconnect attempt=" + attempt + " transport=" + currentTransport());
+    });
+
+    socket.io.on("reconnect", function (attempt) {
+      log("log", "Socket.IO reconnected after attempts=" + attempt + " transport=" + currentTransport());
+    });
+
+    socket.io.on("reconnect_error", function (err) {
+      log("error", "Socket.IO reconnect error", err);
+    });
+
+    socket.io.on("reconnect_failed", function () {
+      log("error", "Socket.IO reconnect failed");
+    });
+
+    if (socket.io.engine) {
+      socket.io.engine.on("upgrade", function () {
+        log("log", "Engine transport upgraded transport=" + currentTransport());
+      });
+
+      socket.io.engine.on("upgradeError", function (err) {
+        log("error", "Engine transport upgrade error", err);
+      });
+
+      socket.io.engine.on("close", function (reason) {
+        log("warn", "Engine close reason=" + reason + " transport=" + currentTransport());
+      });
+
+      socket.io.engine.on("error", function (err) {
+        log("error", "Engine error", err);
+      });
+    }
 
     // --- Command Handlers (Server -> Plugin) ---
 

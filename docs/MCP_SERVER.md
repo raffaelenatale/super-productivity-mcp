@@ -13,24 +13,24 @@ PORT=3996 npm start
 
 `npm start` runs `node dist/index.js start`.
 
-Default `PORT` is **3000** if unset. Docs often use **3996** as an example; any free port is fine as long as the plugin URL matches.
+The server defaults to `PORT=3000` if the environment variable is not set. The plugin file (`plugin-logic.js`) connects to `http://127.0.0.1:3996` by default. Set `PORT=3996` when starting the server (or update the `io(...)` call in `plugin-logic.js`) so both sides agree.
 
 **Bind address:** `MCP_HOST` defaults to **`127.0.0.1`** so the HTTP and Socket.IO listener is not exposed on the LAN. Use **`MCP_HOST=0.0.0.0`** only when you need other machines or containers to reach the server (for example Docker port publishing). The MCP endpoint is not authenticated; treat exposure like any local admin surface.
 
 ## Environment
 
-| Variable    | Purpose                          | Default      |
-|------------|-----------------------------------|--------------|
-| `PORT`     | HTTP listen port                  | `3000`       |
-| `MCP_HOST` | Address to bind (`127.0.0.1`, `0.0.0.0`, …) | `127.0.0.1` |
-| `NODE_ENV` | Typical value `production`        | —            |
+| Variable    | Purpose                          | Default      | Recommended  |
+|------------|-----------------------------------|--------------|--------------|
+| `PORT`     | HTTP listen port                  | `3000`       | `3996` (matches plugin default) |
+| `MCP_HOST` | Address to bind (`127.0.0.1`, `0.0.0.0`, …) | `127.0.0.1` | `127.0.0.1` (loopback); `0.0.0.0` for Docker |
+| `NODE_ENV` | Typical value `production`        | —            | —            |
 
 `MCP_DOCKER_COMPOSE_DIR` (optional, in `.env` at repo root) is **not** read by the Node server; it is only for `npm run docker:restart` / `scripts/restart-mcp-docker.sh` — see [Docker Compose (optional)](#docker-compose-optional) below.
 
 Optional `.env` (if you use a loader) — do not commit secrets:
 
 ```env
-PORT=3996
+PORT=3996          # must match the io() URL in plugin-logic.js
 MCP_HOST=127.0.0.1
 NODE_ENV=production
 # MCP_DOCKER_COMPOSE_DIR=/path/to/compose-dir   # optional; see Docker Compose section
