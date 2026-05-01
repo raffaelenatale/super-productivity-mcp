@@ -58,7 +58,7 @@
     "mcp-bridge-plugin/socket.io.min.js"
   ],
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.0.1",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "axios": "^1.14.0",
     "chalk": "^5.6.2",
     "commander": "^14.0.3",
